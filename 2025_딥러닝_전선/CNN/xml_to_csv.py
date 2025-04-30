@@ -31,5 +31,5 @@ def xml_to_csv(xml_folder, image_folder, output_csv):
     print(f"{output_csv} 저장")
 
 # 사용 예
-xml_to_csv("train", "train", "train_labels_multilabel.csv")
+xml_to_csv("train", "train", "train_multilabels.csv")
 

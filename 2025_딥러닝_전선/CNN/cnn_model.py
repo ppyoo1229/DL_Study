@@ -8,6 +8,10 @@ from torch.utils.data import Dataset, DataLoader
 from torchvision import transforms, models
 from sklearn.metrics import f1_score, classification_report
 
+df = pd.read_csv("train/train_multilabels.csv")
+df_sample = df.head(100)
+df_sample.to_csv("train/train_sample.csv", index=False)
+
 # --------- 클래스 목록 (순서 고정) ---------
 CLASS_LABELS = ["Face Mask", "Gloves", "Helmet", "No Gloves", "No Helmet", "No Mask"]
 
@@ -36,7 +40,7 @@ transform = transforms.Compose([
 ])
 
 # --------- 데이터셋 로딩 ---------
-csv_path = "train/train_multilabels.csv"
+csv_path = "C:/Users/sj123/Doit_DeepLearning/2025_딥러닝_전선/train_sample.csv"
 dataset = PPEDataset(csv_path, transform=transform)
 train_loader = DataLoader(dataset, batch_size=16, shuffle=True) #CPU기반 환경이므로 16~ 실행해보고 최대32
 

@@ -7,10 +7,18 @@ import torch.optim as optim
 from torch.utils.data import Dataset, DataLoader
 from torchvision import transforms, models
 from sklearn.metrics import f1_score, classification_report
+from torch.utils.data import Subset
 
-df = pd.read_csv("train/train_multilabels.csv")
+df = pd.read_csv("C:/Users/sj123/Doit_DeepLearning/2025_딥러닝_전선/train_sample.csv")
 df_sample = df.head(100)
-df_sample.to_csv("train/train_sample.csv", index=False)
+df_sample.to_csv("C:/Users/sj123/Doit_DeepLearning/2025_딥러닝_전선/train_sample.csv", index=False)
+
+# 원래 전체 데이터셋
+full_dataset = PPEDataset("C:/Users/sj123/Doit_DeepLearning/2025_딥러닝_전선/train_sample.csv", transform=transform)
+
+# 앞에서 100개만 학습에 사용
+small_dataset = Subset(full_dataset, range(100))
+train_loader = DataLoader(small_dataset, batch_size=16, shuffle=True)
 
 # --------- 클래스 목록 (순서 고정) ---------
 CLASS_LABELS = ["Face Mask", "Gloves", "Helmet", "No Gloves", "No Helmet", "No Mask"]

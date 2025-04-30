@@ -76,19 +76,19 @@ for epoch in range(num_epochs):
     avg_loss = running_loss / len(train_loader)
     print(f"[Epoch {epoch+1}] Loss: {avg_loss:.4f}")
 
-# --------- 성능 평가 (옵션) ---------
-model.eval()
-all_labels = []
-all_preds = []
-
-with torch.no_grad():
-    for images, labels in train_loader:
-        images = images.to(device)
-        outputs = model(images)
-        probs = torch.sigmoid(outputs).cpu().numpy()
-        preds = (probs > 0.5).astype(int)
-        all_preds.extend(preds)
-        all_labels.extend(labels.numpy())
-
-print("\n[Classification Report]")
-print(classification_report(all_labels, all_preds, target_names=CLASS_LABELS))
+# --------- 성능 평가 ---------
+# model.eval()
+# all_labels = []
+# all_preds = []
+#
+# with torch.no_grad():
+#     for images, labels in train_loader:
+#         images = images.to(device)
+#         outputs = model(images)
+#         probs = torch.sigmoid(outputs).cpu().numpy()
+#         preds = (probs > 0.5).astype(int) # 클래스별 확률을 이진 결과로 변환
+#         all_preds.extend(preds)
+#         all_labels.extend(labels.numpy())
+#
+# print("\n[Classification Report]") # F1-score, precision, recall 평가
+# print(classification_report(all_labels, all_preds, target_names=CLASS_LABELS))

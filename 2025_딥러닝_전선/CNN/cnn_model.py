@@ -9,17 +9,6 @@ from torchvision import transforms, models
 from sklearn.metrics import f1_score, classification_report
 from torch.utils.data import Subset
 
-df = pd.read_csv("C:/Users/sj123/Doit_DeepLearning/2025_딥러닝_전선/train_sample.csv")
-df_sample = df.head(100)
-df_sample.to_csv("C:/Users/sj123/Doit_DeepLearning/2025_딥러닝_전선/train_sample.csv", index=False)
-
-# 원래 전체 데이터셋
-full_dataset = PPEDataset("C:/Users/sj123/Doit_DeepLearning/2025_딥러닝_전선/train_sample.csv", transform=transform)
-
-# 앞에서 100개만 학습에 사용
-small_dataset = Subset(full_dataset, range(100))
-train_loader = DataLoader(small_dataset, batch_size=16, shuffle=True)
-
 # --------- 클래스 목록 (순서 고정) ---------
 CLASS_LABELS = ["Face Mask", "Gloves", "Helmet", "No Gloves", "No Helmet", "No Mask"]
 
@@ -47,9 +36,14 @@ transform = transforms.Compose([
     transforms.ToTensor(),
 ])
 
-# --------- 데이터셋 로딩 ---------
-csv_path = "C:/Users/sj123/Doit_DeepLearning/2025_딥러닝_전선/train_sample.csv"
-dataset = PPEDataset(csv_path, transform=transform)
+# --------- 샘플 데이터셋 생성 (앞의 100개만 추출해서 저장) ---------
+df = pd.read_csv("C:/Users/sj123/Doit_DeepLearning/2025_딥러닝_전선/train_multilabels.csv")
+df_sample = df.head(100)
+sample_csv_path = "C:/Users/sj123/Doit_DeepLearning/2025_딥러닝_전선/train_sample.csv"
+df_sample.to_csv(sample_csv_path, index=False)
+
+# --------- 데이터 로딩 ---------
+dataset = PPEDataset(sample_csv_path, transform=transform)
 train_loader = DataLoader(dataset, batch_size=16, shuffle=True) #CPU기반 환경이므로 16~ 실행해보고 최대32
 
 # --------- 모델 정의 (ResNet18 기반) ---------
@@ -89,18 +83,18 @@ for epoch in range(num_epochs):
     print(f"[Epoch {epoch+1}] Loss: {avg_loss:.4f}")
 
 # --------- 성능 평가 ---------
-# model.eval()
-# all_labels = []
-# all_preds = []
-#
-# with torch.no_grad():
-#     for images, labels in train_loader:
-#         images = images.to(device)
-#         outputs = model(images)
-#         probs = torch.sigmoid(outputs).cpu().numpy()
-#         preds = (probs > 0.5).astype(int) # 클래스별 확률을 이진 결과로 변환
-#         all_preds.extend(preds)
-#         all_labels.extend(labels.numpy())
-#
-# print("\n[Classification Report]") # F1-score, precision, recall 평가
-# print(classification_report(all_labels, all_preds, target_names=CLASS_LABELS))
+model.eval()
+all_labels = []
+all_preds = []
+
+with torch.no_grad():
+    for images, labels in train_loader:
+        images = images.to(device)
+        outputs = model(images)
+        probs = torch.sigmoid(outputs).cpu().numpy()
+        preds = (probs > 0.5).astype(int) # 클래스별 확률을 이진 결과로 변환
+        all_preds.extend(preds)
+        all_labels.extend(labels.numpy())
+
+print("\n[Classification Report]") # F1-score, precision, recall 평가
+print(classification_report(all_labels, all_preds, target_names=CLASS_LABELS))

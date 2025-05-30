@@ -17,10 +17,9 @@ def xml_to_multilabel_csv(xml_folder, img_folder, output_csv):
         if not f.endswith(".xml"):
             continue
         root = ET.parse(os.path.join(xml_folder, f)).getroot()
-        fn = root.find("filename").text             # e.g. "PP02img464.jpg"
+        fn = root.find("filename").text
         objs = [o.find("name").text for o in root.findall("object")]
         vec = make_label_vector(objs, CLASS_LABELS)
-        # fn에는 파일명만 있으므로, 전체 경로 조립
         img_path = os.path.join(img_folder, fn)
         rows.append([img_path] + vec)
 
@@ -30,13 +29,18 @@ def xml_to_multilabel_csv(xml_folder, img_folder, output_csv):
     print("Saved:", output_csv)
 
 if __name__ == "__main__":
-    BASE_RAW   = r"C:\Users\sj123\Doit_DeepLearning\2025_딥러닝_전선\PPE_Data\raw\train"
-    XML_DIR    = BASE_RAW
-    IMG_DIR    = BASE_RAW
-    OUTPUT_CSV = r"C:\Users\sj123\Doit_DeepLearning\2025_딥러닝_전선\PPE_Data\processed\train_multilabels.csv"
+    BASE_RAW = r"C:\Users\sj123\Doit_DeepLearning\2025_딥러닝_전선\PPE_Data\raw"
 
+    # valid
     xml_to_multilabel_csv(
-        xml_folder=XML_DIR,
-        img_folder=IMG_DIR,
-        output_csv=OUTPUT_CSV
+        xml_folder=os.path.join(BASE_RAW, "valid"),
+        img_folder=os.path.join(BASE_RAW, "valid"),
+        output_csv=r"C:\Users\sj123\Doit_DeepLearning\2025_딥러닝_전선\PPE_Data\processed\valid_multilabels.csv"
+    )
+
+    # test
+    xml_to_multilabel_csv(
+        xml_folder=os.path.join(BASE_RAW, "test"),
+        img_folder=os.path.join(BASE_RAW, "test"),
+        output_csv=r"C:\Users\sj123\Doit_DeepLearning\2025_딥러닝_전선\PPE_Data\processed\test_multilabels.csv"
     )
